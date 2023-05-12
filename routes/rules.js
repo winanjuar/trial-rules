@@ -44,20 +44,22 @@ router.post("/jre", function (req, res, next) {
         message: "Player has fouled out!",
       },
     },
-    onSuccess() {
-      res.json({ status: false, message: "Akumulasi kartu" });
-    },
-    onFailure() {
-      res.json({
-        status: true,
-        message: "Masih boleh main",
-      });
-    },
   });
 
   let facts = req.body;
-  engine.run(facts).then(({ events }) => {
-    events.forEach((event) => console.log(event.params.message));
+
+  // engine.run(facts).then(({ events }) => {
+  //   events.forEach((event) => console.log(event.params.message));
+  // });
+
+  engine.run(facts);
+
+  engine.on("success", () => {
+    res.json({ status: false, message: "Akumulasi kartu" });
+  });
+
+  engine.on("failure", () => {
+    res.json({ status: true, message: "Masih boleh main" });
   });
 });
 
