@@ -1,50 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
 
 router.post("/jre", function (req, res, next) {
   const { Engine } = require("json-rules-engine");
+  const jsonRule = JSON.parse(fs.readFileSync("rule.json", "utf8"));
   let engine = new Engine();
-  engine.addRule({
-    conditions: {
-      any: [
-        {
-          all: [
-            {
-              fact: "gameDuration",
-              operator: "equal",
-              value: 40,
-            },
-            {
-              fact: "personalFoulCount",
-              operator: "greaterThanInclusive",
-              value: 5,
-            },
-          ],
-        },
-        {
-          all: [
-            {
-              fact: "gameDuration",
-              operator: "equal",
-              value: 48,
-            },
-            {
-              fact: "personalFoulCount",
-              operator: "greaterThanInclusive",
-              value: 6,
-            },
-          ],
-        },
-      ],
-    },
-    event: {
-      // define the event to fire when the conditions evaluate truthy
-      type: "fouledOut",
-      params: {
-        message: "Player has fouled out!",
-      },
-    },
-  });
+  engine.addRule(jsonRule);
 
   let facts = req.body;
 
